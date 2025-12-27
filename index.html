@@ -280,190 +280,200 @@
   </div>
 
   <script>
-    document.querySelector('.cta-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
-    });
+document.querySelector('.cta-btn').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
+});
 
-    let contacts = [];
-    let editIndex = null;
-    let showFavoritesOnly = false;
+// ✅ NEW: Load contacts from storage
+let contacts = JSON.parse(localStorage.getItem('contactHub2_contacts')) || [];
+let editIndex = null;
+let showFavoritesOnly = false;
 
-    const nameInput = document.getElementById("name");
-    const phoneInput = document.getElementById("phone");
-    const emailInput = document.getElementById("email");
-    const addBtn = document.getElementById("addBtn");
-    const updateBtn = document.getElementById("updateBtn");
-    const cancelEditBtn = document.getElementById("cancelEditBtn");
-    const contactBody = document.getElementById("contactBody");
-    const searchInput = document.getElementById("searchInput");
-    const favoritesOnlyBtn = document.getElementById("favoritesOnly");
-    const locationStatus = document.getElementById("locationStatus");
+// ✅ NEW: Save function
+function saveContacts() {
+  localStorage.setItem('contactHub2_contacts', JSON.stringify(contacts));
+}
 
-    function renderContacts(filteredContacts) {
-      contactBody.innerHTML = "";
-      filteredContacts.forEach((contact, index) => {
-        const tr = document.createElement("tr");
-        if (contact.isFavorite) tr.classList.add("favorite-row");
+const nameInput = document.getElementById("name");
+const phoneInput = document.getElementById("phone");
+const emailInput = document.getElementById("email");
+const addBtn = document.getElementById("addBtn");
+const updateBtn = document.getElementById("updateBtn");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+const contactBody = document.getElementById("contactBody");
+const searchInput = document.getElementById("searchInput");
+const favoritesOnlyBtn = document.getElementById("favoritesOnly");
+const locationStatus = document.getElementById("locationStatus");
 
-        tr.innerHTML = `
-          <td>
-            <button class="action-btn favorite ${contact.isFavorite ? '' : 'unfavorite'}" 
-                    onclick="toggleFavorite(${index})">
-              ${contact.isFavorite ? '⭐' : '☆'}
-            </button>
-          </td>
-          <td>${contact.name}</td>
-          <td>${contact.phone}</td>
-          <td>${contact.email || ""}</td>
-          <td>
-            <button class="action-btn call" onclick="callContact('${contact.phone}')">📞</button>
-            <button class="action-btn sms" onclick="smsContact('${contact.phone}')">💬</button>
-            <button class="action-btn edit" onclick="editContact(${index})">✏️</button>
-            <button class="action-btn delete" onclick="deleteContact(${index})">🗑️</button>
-            <button class="action-btn loc" onclick="trackLocation('${contact.name}')">📍</button>
-          </td>
-        `;
-        contactBody.appendChild(tr);
-      });
-    }
+function renderContacts(filteredContacts) {
+  contactBody.innerHTML = "";
+  filteredContacts.forEach((contact, index) => {
+    const tr = document.createElement("tr");
+    if (contact.isFavorite) tr.classList.add("favorite-row");
 
-    window.toggleFavorite = function(index) {
-      contacts[index].isFavorite = !contacts[index].isFavorite;
-      renderCurrentList();
-    };
+    tr.innerHTML = `
+      <td>
+        <button class="action-btn favorite ${contact.isFavorite ? '' : 'unfavorite'}" 
+                onclick="toggleFavorite(${index})">
+          ${contact.isFavorite ? '⭐' : '☆'}
+        </button>
+      </td>
+      <td>${contact.name}</td>
+      <td>${contact.phone}</td>
+      <td>${contact.email || ""}</td>
+      <td>
+        <button class="action-btn call" onclick="callContact('${contact.phone}')">📞</button>
+        <button class="action-btn sms" onclick="smsContact('${contact.phone}')">💬</button>
+        <button class="action-btn edit" onclick="editContact(${index})">✏️</button>
+        <button class="action-btn delete" onclick="deleteContact(${index})">🗑️</button>
+        <button class="action-btn loc" onclick="trackLocation('${contact.name}')">📍</button>
+      </td>
+    `;
+    contactBody.appendChild(tr);
+  });
+}
 
-    addBtn.addEventListener("click", () => {
-      const name = nameInput.value.trim();
-      const phone = phoneInput.value.trim();
-      const email = emailInput.value.trim();
+window.toggleFavorite = function(index) {
+  contacts[index].isFavorite = !contacts[index].isFavorite;
+  saveContacts();  // ✅ SAVED
+  renderCurrentList();
+};
 
-      if (!name || !phone) {
-        alert("❌ Name and phone are required!");
-        return;
-      }
+addBtn.addEventListener("click", () => {
+  const name = nameInput.value.trim();
+  const phone = phoneInput.value.trim();
+  const email = emailInput.value.trim();
 
-      contacts.push({ name, phone, email, isFavorite: false });
-      clearForm();
-      renderCurrentList();
-    });
+  if (!name || !phone) {
+    alert("❌ Name and phone are required!");
+    return;
+  }
 
-    window.editContact = function(index) {
-      const contact = contacts[index];
-      nameInput.value = contact.name;
-      phoneInput.value = contact.phone;
-      emailInput.value = contact.email || "";
-      editIndex = index;
+  contacts.push({ name, phone, email, isFavorite: false });
+  saveContacts();  // ✅ SAVED
+  clearForm();
+  renderCurrentList();
+});
 
-      addBtn.style.display = "none";
-      updateBtn.style.display = "inline-block";
-      cancelEditBtn.style.display = "inline-block";
-    };
+window.editContact = function(index) {
+  const contact = contacts[index];
+  nameInput.value = contact.name;
+  phoneInput.value = contact.phone;
+  emailInput.value = contact.email || "";
+  editIndex = index;
 
-    updateBtn.addEventListener("click", () => {
-      if (editIndex === null) return;
+  addBtn.style.display = "none";
+  updateBtn.style.display = "inline-block";
+  cancelEditBtn.style.display = "inline-block";
+};
 
-      const name = nameInput.value.trim();
-      const phone = phoneInput.value.trim();
-      const email = emailInput.value.trim();
+updateBtn.addEventListener("click", () => {
+  if (editIndex === null) return;
 
-      if (!name || !phone) {
-        alert("❌ Name and phone are required!");
-        return;
-      }
+  const name = nameInput.value.trim();
+  const phone = phoneInput.value.trim();
+  const email = emailInput.value.trim();
 
-      contacts[editIndex] = { 
-        name, 
-        phone, 
-        email, 
-        isFavorite: contacts[editIndex].isFavorite 
-      };
-      clearForm();
-      renderCurrentList();
+  if (!name || !phone) {
+    alert("❌ Name and phone are required!");
+    return;
+  }
 
-      editIndex = null;
-      addBtn.style.display = "inline-block";
-      updateBtn.style.display = "none";
-      cancelEditBtn.style.display = "none";
-    });
+  contacts[editIndex] = { 
+    name, 
+    phone, 
+    email, 
+    isFavorite: contacts[editIndex].isFavorite 
+  };
+  saveContacts();  // ✅ SAVED
+  clearForm();
+  renderCurrentList();
 
-    cancelEditBtn.addEventListener("click", clearFormAndReset);
+  editIndex = null;
+  addBtn.style.display = "inline-block";
+  updateBtn.style.display = "none";
+  cancelEditBtn.style.display = "none";
+});
 
-    window.deleteContact = function(index) {
-      if (confirm("🗑️ Delete this contact?")) {
-        contacts.splice(index, 1);
-        renderCurrentList();
-      }
-    };
+cancelEditBtn.addEventListener("click", clearFormAndReset);
 
-    function renderCurrentList() {
-      const query = searchInput.value.toLowerCase();
-      let filtered = contacts.filter(contact =>
-        contact.name.toLowerCase().includes(query) ||
-        contact.phone.toLowerCase().includes(query)
-      );
-
-      if (showFavoritesOnly) {
-        filtered = filtered.filter(contact => contact.isFavorite);
-      }
-
-      renderContacts(filtered);
-    }
-
-    searchInput.addEventListener("input", renderCurrentList);
-
-    favoritesOnlyBtn.addEventListener("click", () => {
-      showFavoritesOnly = !showFavoritesOnly;
-      favoritesOnlyBtn.textContent = showFavoritesOnly ? "📱 All Contacts" : "⭐ Favorites Only";
-      favoritesOnlyBtn.style.background = showFavoritesOnly ? "#27ae60" : "#f39c12";
-      renderCurrentList();
-    });
-
-    window.callContact = function(phone) {
-      window.location.href = `tel:${phone}`;
-    };
-
-    window.smsContact = function(phone) {
-      window.location.href = `sms:${phone}`;
-    };
-
-    window.trackLocation = function(contactName) {
-      if (!navigator.geolocation) {
-        locationStatus.textContent = "❌ Geolocation not supported";
-        return;
-      }
-
-      locationStatus.innerHTML = `📍 Getting location for <strong>${contactName}</strong>...`;
-
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const { latitude, longitude } = position.coords;
-          const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          locationStatus.innerHTML = `
-            📍 <strong>${contactName}</strong> Location:<br>
-            Lat: ${latitude.toFixed(5)} | Lng: ${longitude.toFixed(5)}<br>
-            <a href="${mapUrl}" target="_blank">🗺️ Open in Google Maps</a>
-          `;
-        },
-        error => {
-          locationStatus.textContent = `❌ Location error: ${error.message}`;
-        }
-      );
-    };
-
-    function clearForm() {
-      nameInput.value = phoneInput.value = emailInput.value = "";
-    }
-
-    function clearFormAndReset() {
-      clearForm();
-      editIndex = null;
-      addBtn.style.display = "inline-block";
-      updateBtn.style.display = "none";
-      cancelEditBtn.style.display = "none";
-    }
-
+window.deleteContact = function(index) {
+  if (confirm("🗑️ Delete this contact?")) {
+    contacts.splice(index, 1);
+    saveContacts();  // ✅ SAVED
     renderCurrentList();
-  </script>
+  }
+};
+
+function renderCurrentList() {
+  const query = searchInput.value.toLowerCase();
+  let filtered = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(query) ||
+    contact.phone.toLowerCase().includes(query)
+  );
+
+  if (showFavoritesOnly) {
+    filtered = filtered.filter(contact => contact.isFavorite);
+  }
+
+  renderContacts(filtered);
+}
+
+searchInput.addEventListener("input", renderCurrentList);
+
+favoritesOnlyBtn.addEventListener("click", () => {
+  showFavoritesOnly = !showFavoritesOnly;
+  favoritesOnlyBtn.textContent = showFavoritesOnly ? "📱 All Contacts" : "⭐ Favorites Only";
+  favoritesOnlyBtn.style.background = showFavoritesOnly ? "#27ae60" : "#f39c12";
+  renderCurrentList();
+});
+
+window.callContact = function(phone) {
+  window.location.href = `tel:${phone}`;
+};
+
+window.smsContact = function(phone) {
+  window.location.href = `sms:${phone}`;
+};
+
+window.trackLocation = function(contactName) {
+  if (!navigator.geolocation) {
+    locationStatus.textContent = "❌ Geolocation not supported";
+    return;
+  }
+
+  locationStatus.innerHTML = `📍 Getting location for <strong>${contactName}</strong>...`;
+
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const { latitude, longitude } = position.coords;
+      const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      locationStatus.innerHTML = `
+        📍 <strong>${contactName}</strong> Location:<br>
+        Lat: ${latitude.toFixed(5)} | Lng: ${longitude.toFixed(5)}<br>
+        <a href="${mapUrl}" target="_blank">🗺️ Open in Google Maps</a>
+      `;
+    },
+    error => {
+      locationStatus.textContent = `❌ Location error: ${error.message}`;
+    }
+  );
+};
+
+function clearForm() {
+  nameInput.value = phoneInput.value = emailInput.value = "";
+}
+
+function clearFormAndReset() {
+  clearForm();
+  editIndex = null;
+  addBtn.style.display = "inline-block";
+  updateBtn.style.display = "none";
+  cancelEditBtn.style.display = "none";
+}
+
+renderCurrentList();  // ✅ Loads saved contacts
+</script>
 </body>
 </html>
