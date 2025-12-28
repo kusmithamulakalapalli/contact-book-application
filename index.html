@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Contact Hub 2.0</title>
+  <title>Contact Hub 2.0 - Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -11,469 +11,253 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       overflow-x: hidden;
-    }
-
-    /* Hero Intro Section */
-    .hero {
-      height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
-      color: white;
-      position: relative;
-      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
-      overflow: hidden;
     }
-    .hero::before {
-      content: '';
-      position: absolute;
+
+    /* Animated Popup Overlay */
+    .popup-overlay {
+      position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%);
-      animation: float 6s ease-in-out infinite;
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.8s ease-out;
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    .hero h1 {
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(45deg, #00d4ff, #ff6b9d, #4facfe);
+
+    /* Main Creative Heading */
+    .main-heading {
+      text-align: center;
+      animation: slideInUp 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    @keyframes slideInUp {
+      0% { opacity: 0; transform: translateY(100px) scale(0.8); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .main-heading h1 {
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 900;
+      background: linear-gradient(45deg, #00d4ff, #ff6b9d, #4facfe, #ffd700, #ff6b9d);
+      background-size: 400% 400%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: 0 0 30px rgba(255,255,255,0.3);
+      animation: gradientShift 4s ease infinite, glow 2s ease-in-out infinite alternate;
+      text-shadow: 0 0 60px rgba(0,212,255,0.6);
+      margin-bottom: 20px;
+      letter-spacing: -2px;
     }
-    .hero p {
-      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-      max-width: 600px;
-      margin-bottom: 2rem;
-      opacity: 0.95;
-      line-height: 1.6;
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-    .cta-btn {
-      padding: 16px 40px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      background: linear-gradient(45deg, #ff6b9d, #4facfe);
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 20px rgba(0,212,255,0.6)); }
+      to { filter: drop-shadow(0 0 40px rgba(255,107,157,0.8)); }
+    }
+
+    /* Subtitle with particles */
+    .subtitle {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: rgba(255,255,255,0.95);
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .subtitle::before,
+    .subtitle::after {
+      content: '✨';
+      position: absolute;
+      animation: sparkle 2s infinite;
+    }
+    .subtitle::before { left: -30px; animation-delay: 0s; }
+    .subtitle::after { right: -30px; animation-delay: 1s; }
+    @keyframes sparkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* Enter Button */
+    .enter-btn {
+      padding: 20px 50px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #ff6b9d, #4facfe, #00d4ff);
+      background-size: 300% 300%;
       color: white;
       border: none;
-      border-radius: 50px;
+      border-radius: 60px;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(255,107,157,0.4);
-      transition: all 0.3s ease;
+      box-shadow: 0 20px 40px rgba(255,107,157,0.4);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: pulse 2s infinite;
       text-decoration: none;
       display: inline-block;
     }
-    .cta-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(255,107,157,0.6);
+    @keyframes pulse {
+      0% { box-shadow: 0 20px 40px rgba(255,107,157,0.4); }
+      50% { box-shadow: 0 20px 60px rgba(255,107,157,0.7); }
+      100% { box-shadow: 0 20px 40px rgba(255,107,157,0.4); }
     }
-    .scroll-indicator {
-      position: absolute;
-      bottom: 30px;
-      width: 40px;
-      height: 40px;
-      margin: 0 auto;
-      left: 0; right: 0;
-    }
-    .scroll-arrow {
-      width: 20px;
-      height: 20px;
-      border: 2px solid white;
-      border-left: none;
-      border-top: none;
-      transform: rotate(45deg);
-      animation: bounce 2s infinite;
-    }
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
-      40% { transform: translateY(-10px) rotate(45deg); }
-      60% { transform: translateY(-5px) rotate(45deg); }
+    .enter-btn:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 30px 60px rgba(255,107,157,0.7);
+      animation: none;
     }
 
-    /* App Styles */
-    header {
-      background: linear-gradient(135deg, #2c3e50, #3498db);
-      color: #fff;
-      padding: 15px 20px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    /* Login Form (Hidden initially) */
+    .login-container {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 50px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      max-width: 400px;
+      width: 90%;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1001;
     }
-    header h1 { 
-      margin: 0; 
-      font-size: 1.8rem;
+    .login-container.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    .login-container h2 {
+      text-align: center;
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 30px;
       background: linear-gradient(45deg, #fff, #4facfe);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    header p { margin-top: 8px; font-size: 14px; opacity: 0.9; }
-
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .form-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .form-row input {
-      flex: 1;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      min-width: 150px;
-    }
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    #addBtn { background: #27ae60; color: #fff; }
-    #updateBtn { background: #2980b9; color: #fff; display: none; }
-    #cancelEditBtn { background: #7f8c8d; color: #fff; display: none; }
-
-    .filter-section {
-      display: flex;
-      gap: 10px;
-      margin: 20px 0;
-      align-items: center;
-    }
-    #searchInput {
-      flex: 1;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-    #favoritesOnly {
-      padding: 8px 12px;
-      background: #f39c12;
-      color: #fff;
-    }
-    #favoritesOnly:hover { background: #e67e22; }
-
-    table {
+    .login-container input {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 15px;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
     }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 12px 8px;
-      text-align: left;
-      font-size: 14px;
+    .login-container button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(45deg, #27ae60, #2ecc71);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
-    th {
-      background: #ecf0f1;
-      position: sticky;
-      top: 0;
-    }
-
-    .action-btn {
-      margin-right: 4px;
-      margin-bottom: 4px;
-      font-size: 12px;
-      padding: 6px 8px;
-    }
-    .edit { background: #2980b9; color: #fff; }
-    .delete { background: #c0392b; color: #fff; }
-    .call { background: #16a085; color: #fff; }
-    .sms { background: #8e44ad; color: #fff; }
-    .loc { background: #d35400; color: #fff; }
-    .favorite {
-      background: #f1c40f;
-      color: #fff;
-      font-weight: bold;
-    }
-    .favorite.unfavorite:hover { background: #f39c12; }
-
-    .favorite-icon {
-      font-size: 16px;
-      margin-right: 4px;
-    }
-    .favorite-row {
-      background-color: #fff3cd;
-      font-weight: 500;
+    .login-container button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(39,174,96,0.4);
     }
 
-    #locationStatus {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 4px;
-      font-size: 13px;
-      background: #e8f4f8;
-      border-left: 4px solid #3498db;
+    /* Background Floating Elements */
+    .floating-bg {
+      position: fixed;
+      border-radius: 50%;
+      background: linear-gradient(45deg, rgba(0,212,255,0.1), rgba(255,107,157,0.1));
+      pointer-events: none;
+      z-index: -1;
+    }
+    .float1 { width: 200px; height: 200px; top: 10%; left: 10%; animation: float 15s infinite linear; }
+    .float2 { width: 150px; height: 150px; bottom: 20%; right: 15%; animation: float 20s infinite linear reverse; }
+    .float3 { width: 100px; height: 100px; top: 60%; left: 5%; animation: float 18s infinite linear; }
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+      100% { transform: translateY(0px) rotate(360deg); }
     }
 
     @media (max-width: 768px) {
-      .form-row { flex-direction: column; }
-      .filter-section { flex-direction: column; }
-      .action-btn { font-size: 11px; padding: 4px 6px; margin: 1px; }
+      .main-heading h1 { letter-spacing: -1px; }
+      .login-container { padding: 30px 20px; }
     }
   </style>
 </head>
 <body>
-  <!-- Hero Intro -->
-  <section class="hero" id="home">
-    <h1>Contact Hub 2.0</h1>
-    <p>🚀 Your all-in-one contact manager with smart search, favorites, instant calls/SMS, and real-time location tracking. Built for modern connectivity.</p>
-    <a href="#app" class="cta-btn">🌟 Start Managing Contacts</a>
-    <div class="scroll-indicator">
-      <div class="scroll-arrow"></div>
+  <!-- Floating Background Elements -->
+  <div class="floating-bg float1"></div>
+  <div class="floating-bg float2"></div>
+  <div class="floating-bg float3"></div>
+
+  <!-- Creative Popup Overlay -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="main-heading">
+      <h1>CONTACT HUB</h1>
+      <p class="subtitle">Your Smart Contact Manager Awaits ✨</p>
+      <button class="enter-btn" onclick="enterApp()">🚀 ENTER CONTACT HUB</button>
     </div>
-  </section>
+  </div>
 
-  <!-- App -->
-  <header>
-    <h1>⭐ Contact Hub 2.0 Dashboard</h1>
-    <p>Manage contacts with favorites, call, SMS, location tracking & search</p>
-  </header>
-
-  <div class="container" id="app">
-    <div id="formSection">
-      <h2>Add New Contact</h2>
-      <div class="form-row">
-        <input type="text" id="name" placeholder="Full Name *" />
-        <input type="tel" id="phone" placeholder="Phone Number *" />
-        <input type="email" id="email" placeholder="Email (optional)" />
-      </div>
-      <div class="form-row">
-        <button id="addBtn">➕ Add Contact</button>
-        <button id="updateBtn">✏️ Update Contact</button>
-        <button id="cancelEditBtn">❌ Cancel</button>
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <h3>Contacts</h3>
-      <input type="text" id="searchInput" placeholder="🔍 Search by name or phone..." />
-      <button id="favoritesOnly">⭐ Favorites Only</button>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Fav</th>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Email</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="contactBody"></tbody>
-    </table>
-
-    <div id="locationStatus"></div>
+  <!-- Login Form (Hidden Initially) -->
+  <div class="login-container" id="loginForm">
+    <h2>🔐 Quick Login</h2>
+    <input type="text" id="username" placeholder="👤 Username" />
+    <input type="password" id="password" placeholder="🔒 Password" />
+    <button onclick="login()">📱 Login to Contacts</button>
   </div>
 
   <script>
-document.querySelector('.cta-btn').addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
-});
+    // Auto-dismiss popup after 5 seconds or on Enter button click
+    setTimeout(() => {
+      if (document.getElementById('popupOverlay').style.display !== 'none') {
+        enterApp();
+      }
+    }, 5000);
 
-// ✅ NEW: Load contacts from storage
-let contacts = JSON.parse(localStorage.getItem('contactHub2_contacts')) || [];
-let editIndex = null;
-let showFavoritesOnly = false;
-
-// ✅ NEW: Save function
-function saveContacts() {
-  localStorage.setItem('contactHub2_contacts', JSON.stringify(contacts));
-}
-
-const nameInput = document.getElementById("name");
-const phoneInput = document.getElementById("phone");
-const emailInput = document.getElementById("email");
-const addBtn = document.getElementById("addBtn");
-const updateBtn = document.getElementById("updateBtn");
-const cancelEditBtn = document.getElementById("cancelEditBtn");
-const contactBody = document.getElementById("contactBody");
-const searchInput = document.getElementById("searchInput");
-const favoritesOnlyBtn = document.getElementById("favoritesOnly");
-const locationStatus = document.getElementById("locationStatus");
-
-function renderContacts(filteredContacts) {
-  contactBody.innerHTML = "";
-  filteredContacts.forEach((contact, index) => {
-    const tr = document.createElement("tr");
-    if (contact.isFavorite) tr.classList.add("favorite-row");
-
-    tr.innerHTML = `
-      <td>
-        <button class="action-btn favorite ${contact.isFavorite ? '' : 'unfavorite'}" 
-                onclick="toggleFavorite(${index})">
-          ${contact.isFavorite ? '⭐' : '☆'}
-        </button>
-      </td>
-      <td>${contact.name}</td>
-      <td>${contact.phone}</td>
-      <td>${contact.email || ""}</td>
-      <td>
-        <button class="action-btn call" onclick="callContact('${contact.phone}')">📞</button>
-        <button class="action-btn sms" onclick="smsContact('${contact.phone}')">💬</button>
-        <button class="action-btn edit" onclick="editContact(${index})">✏️</button>
-        <button class="action-btn delete" onclick="deleteContact(${index})">🗑️</button>
-        <button class="action-btn loc" onclick="trackLocation('${contact.name}')">📍</button>
-      </td>
-    `;
-    contactBody.appendChild(tr);
-  });
-}
-
-window.toggleFavorite = function(index) {
-  contacts[index].isFavorite = !contacts[index].isFavorite;
-  saveContacts();  // ✅ SAVED
-  renderCurrentList();
-};
-
-addBtn.addEventListener("click", () => {
-  const name = nameInput.value.trim();
-  const phone = phoneInput.value.trim();
-  const email = emailInput.value.trim();
-
-  if (!name || !phone) {
-    alert("❌ Name and phone are required!");
-    return;
-  }
-
-  contacts.push({ name, phone, email, isFavorite: false });
-  saveContacts();  // ✅ SAVED
-  clearForm();
-  renderCurrentList();
-});
-
-window.editContact = function(index) {
-  const contact = contacts[index];
-  nameInput.value = contact.name;
-  phoneInput.value = contact.phone;
-  emailInput.value = contact.email || "";
-  editIndex = index;
-
-  addBtn.style.display = "none";
-  updateBtn.style.display = "inline-block";
-  cancelEditBtn.style.display = "inline-block";
-};
-
-updateBtn.addEventListener("click", () => {
-  if (editIndex === null) return;
-
-  const name = nameInput.value.trim();
-  const phone = phoneInput.value.trim();
-  const email = emailInput.value.trim();
-
-  if (!name || !phone) {
-    alert("❌ Name and phone are required!");
-    return;
-  }
-
-  contacts[editIndex] = { 
-    name, 
-    phone, 
-    email, 
-    isFavorite: contacts[editIndex].isFavorite 
-  };
-  saveContacts();  // ✅ SAVED
-  clearForm();
-  renderCurrentList();
-
-  editIndex = null;
-  addBtn.style.display = "inline-block";
-  updateBtn.style.display = "none";
-  cancelEditBtn.style.display = "none";
-});
-
-cancelEditBtn.addEventListener("click", clearFormAndReset);
-
-window.deleteContact = function(index) {
-  if (confirm("🗑️ Delete this contact?")) {
-    contacts.splice(index, 1);
-    saveContacts();  // ✅ SAVED
-    renderCurrentList();
-  }
-};
-
-function renderCurrentList() {
-  const query = searchInput.value.toLowerCase();
-  let filtered = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(query) ||
-    contact.phone.toLowerCase().includes(query)
-  );
-
-  if (showFavoritesOnly) {
-    filtered = filtered.filter(contact => contact.isFavorite);
-  }
-
-  renderContacts(filtered);
-}
-
-searchInput.addEventListener("input", renderCurrentList);
-
-favoritesOnlyBtn.addEventListener("click", () => {
-  showFavoritesOnly = !showFavoritesOnly;
-  favoritesOnlyBtn.textContent = showFavoritesOnly ? "📱 All Contacts" : "⭐ Favorites Only";
-  favoritesOnlyBtn.style.background = showFavoritesOnly ? "#27ae60" : "#f39c12";
-  renderCurrentList();
-});
-
-window.callContact = function(phone) {
-  window.location.href = `tel:${phone}`;
-};
-
-window.smsContact = function(phone) {
-  window.location.href = `sms:${phone}`;
-};
-
-window.trackLocation = function(contactName) {
-  if (!navigator.geolocation) {
-    locationStatus.textContent = "❌ Geolocation not supported";
-    return;
-  }
-
-  locationStatus.innerHTML = `📍 Getting location for <strong>${contactName}</strong>...`;
-
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      const { latitude, longitude } = position.coords;
-      const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      locationStatus.innerHTML = `
-        📍 <strong>${contactName}</strong> Location:<br>
-        Lat: ${latitude.toFixed(5)} | Lng: ${longitude.toFixed(5)}<br>
-        <a href="${mapUrl}" target="_blank">🗺️ Open in Google Maps</a>
-      `;
-    },
-    error => {
-      locationStatus.textContent = `❌ Location error: ${error.message}`;
+    function enterApp() {
+      const overlay = document.getElementById('popupOverlay');
+      const loginForm = document.getElementById('loginForm');
+      
+      overlay.style.transform = 'scale(1.1)';
+      overlay.style.opacity = '0';
+      
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        loginForm.classList.add('show');
+      }, 600);
     }
-  );
-};
 
-function clearForm() {
-  nameInput.value = phoneInput.value = emailInput.value = "";
-}
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (username && password) {
+        // Store login state and redirect to Contact Hub
+        localStorage.setItem('contactHubLoggedIn', 'true');
+        window.location.href = 'contact-hub.html'; // Replace with your main app filename
+      } else {
+        alert('❌ Please enter username and password!');
+      }
+    }
 
-function clearFormAndReset() {
-  clearForm();
-  editIndex = null;
-  addBtn.style.display = "inline-block";
-  updateBtn.style.display = "none";
-  cancelEditBtn.style.display = "none";
-}
-
-renderCurrentList();  // ✅ Loads saved contacts
-</script>
+    // Allow Enter key for login
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && document.getElementById('loginForm').classList.contains('show')) {
+        login();
+      }
+    });
+  </script>
 </body>
 </html>
